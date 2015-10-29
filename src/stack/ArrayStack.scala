@@ -23,6 +23,11 @@ class ArrayStack[T: ClassTag] {
     item
   }
 
+  def peek() : T = {
+    if(isEmpty()) throw new Exception("Stack Empty")
+    arr(N)
+  }
+
   def isEmpty() : Boolean = {
     N == 0
   }

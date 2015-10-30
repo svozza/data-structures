@@ -1,6 +1,5 @@
 package linkedlist
 
-import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.ArrayBuilder
 import scala.reflect.ClassTag
 
@@ -16,9 +15,7 @@ class SingleLinkedList[T : ClassTag] {
   def insertFirst(item: T) : Unit = {
       val oldFirst = first
       first = new Node(item, oldFirst)
-      if(isEmpty()) {
-        last = first
-      }
+      if(isEmpty()) last = first
       N += 1
   }
 
@@ -41,9 +38,7 @@ class SingleLinkedList[T : ClassTag] {
       if(node.item == after) {
         val insert = new Node(item, node.next)
         node.next = insert
-        if(node == last) {
-          last = insert
-        }
+        if(node == last) last = insert
       }
     })
     N += 1
@@ -54,18 +49,14 @@ class SingleLinkedList[T : ClassTag] {
     var item = null.asInstanceOf[T]
     traverse(node => {
       if(node.item == after) {
-        if(node == last) {
-          throw new Exception("Cannot call removeAfter on last element of the list.")
-        }
+        if(node == last) throw new Exception("Cannot call removeAfter on last element of the list.")
         item = node.next.item
         node.next = node.next.next
         if(node.next == null) last = node
       }
     })
     N -= 1
-    if(size() == 1) {
-      last = first
-    }
+    if(size() == 1) last = first
     item
   }
 

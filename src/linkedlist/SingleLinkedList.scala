@@ -49,6 +49,26 @@ class SingleLinkedList[T : ClassTag] {
     N += 1
   }
 
+  def removeAfter(after: T) : T = {
+    if(isEmpty()) throw new Exception("List is empty.")
+    var item = null.asInstanceOf[T]
+    traverse(node => {
+      if(node.item == after) {
+        if(node == last) {
+          throw new Exception("Cannot call removeAfter on last element of the list.")
+        }
+        item = node.next.item
+        node.next = node.next.next
+        if(node.next == null) last = node
+      }
+    })
+    N -= 1
+    if(size() == 1) {
+      last = first
+    }
+    item
+  }
+
   def removeFirst() : T = {
     if(isEmpty()) throw new Exception("List is empty.")
     val item = first.item
@@ -133,16 +153,18 @@ object SingleLinkedListTest {
 
     sll.insertAfter(7, 50)
     sll.insertAfter(3, 12)
-    assert(deepEquals(sll, Array[Int](3, 12, 7, 50)))
+    sll.removeAfter(12)
+    assert(deepEquals(sll, Array[Int](3, 12, 50)))
+
+    sll.removeAfter(12)
+    sll.removeAfter(3)
+    assert(deepEquals(sll, Array[Int](3)))
 
     sll.removeLast()
-    sll.removeLast()
-    sll.removeFirst()
-    sll.removeLast()
     sll.insertLast(25)
-    sll.insertAfter(12, 1)
-    sll.insertAfter(25, 17)
-    assert(deepEquals(sll, Array[Int](25, 17)))
+    sll.insertAfter(25, 1)
+    sll.insertAfter(1, 17)
+    assert(deepEquals(sll, Array[Int](25, 1, 17)))
 
     println("Test Passed!")
   }

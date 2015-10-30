@@ -1,8 +1,10 @@
 package linkedlist
 
 import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.ArrayBuilder
+import scala.reflect.ClassTag
 
-class SingleLinkedList[T] {
+class SingleLinkedList[T : ClassTag] {
 
   private var first:Node = null
   private var last: Node = null
@@ -33,10 +35,30 @@ class SingleLinkedList[T] {
     N += 1
   }
 
+  def insertAfter(after: T, item: T) : Unit = {
+    if(isEmpty()) throw new Exception("List is empty.")
+    traverse(node => {
+      if(node.item == after) {
+        val insert = new Node(item, node.next)
+        node.next = insert
+        if(node == last) {
+          last = insert
+        }
+      }
+    })
+    N += 1
+  }
+
   def removeFirst() : T = {
     if(isEmpty()) throw new Exception("List is empty.")
     val item = first.item
-    first = first.next
+    if(size() == 1) {
+      first = null
+      last = null
+    }
+    else {
+      first = first.next
+    }
     N -= 1
     item
   }
@@ -49,47 +71,78 @@ class SingleLinkedList[T] {
       item = first.item
       first = null
       last = null
-      return item
     }
-
-    var x = first
-    while(x != null) {
-      if(x.next == last) {
-        item = x.next.item
-        x.next = null
-        last = x
-      }
-      x = x.next
+    else {
+      traverse(node => {
+        if(node.next == last) {
+          item = node.next.item
+          node.next = null
+          last = node
+        }
+      })
     }
-    return item
+    N -= 1
+    item
   }
 
   def size() : Int = N
 
   def isEmpty() : Boolean = N == 0
 
+  def toArray() : Array[T] = {
+    var builder = ArrayBuilder.make[T]
+    traverse(node => {
+      builder += node.item
+    })
+    builder.result()
+  }
+
+  private def traverse(f: (Node) => Unit) : Unit = {
+    var x = first
+    while(x != null) {
+      f(x)
+      x = x.next
+    }
+  }
+
 }
 
 object SingleLinkedListTest {
 
+  private def deepEquals(sll: SingleLinkedList[Int], expected: Array[Int]) = {
+    sll.toArray().deep.equals(expected.deep)
+  }
+
   def main(args: Array[String]) {
-    val actual = new ArrayBuffer[Int]()
-    val expected = Array[Int](20, 12, 10, 9)
     val sll = new SingleLinkedList[Int]
     sll.insertFirst(3)
     sll.insertFirst(10)
     sll.insertLast(20)
     sll.insertFirst(12)
-    actual += sll.removeLast()
+    assert(deepEquals(sll, Array[Int](12, 10, 3, 20)))
+
+    sll.removeLast()
     sll.insertLast(7)
     sll.insertLast(9)
-    actual += sll.removeFirst()
-    actual += sll.removeFirst()
-    actual += sll.removeLast()
+    assert(deepEquals(sll, Array[Int](12, 10, 3, 7, 9)))
 
-    for(i <- actual.indices) {
-      assert(actual(i) == expected(i))
-    }
+    sll.removeFirst()
+    sll.removeFirst()
+    sll.removeLast()
+    assert(deepEquals(sll, Array[Int](3, 7)))
+
+    sll.insertAfter(7, 50)
+    sll.insertAfter(3, 12)
+    assert(deepEquals(sll, Array[Int](3, 12, 7, 50)))
+
+    sll.removeLast()
+    sll.removeLast()
+    sll.removeFirst()
+    sll.removeLast()
+    sll.insertLast(25)
+    sll.insertAfter(12, 1)
+    sll.insertAfter(25, 17)
+    assert(deepEquals(sll, Array[Int](25, 17)))
 
     println("Test Passed!")
   }

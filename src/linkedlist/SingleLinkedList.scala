@@ -75,18 +75,16 @@ class SingleLinkedList[T : ClassTag] {
   }
 
   def removeLast() : T = {
-    var item = null.asInstanceOf[T]
     if(isEmpty()) throw new Exception("List is empty.")
+    val item = last.item
 
     if(size() == 1) {
-      item = first.item
       first = null
       last = null
     }
     else {
       traverse(node => {
         if(node.next == last) {
-          item = node.next.item
           node.next = null
           last = node
         }

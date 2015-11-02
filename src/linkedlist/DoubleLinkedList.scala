@@ -54,16 +54,14 @@ class DoubleLinkedList[T: ClassTag] {
   }
 
   def removeLast() : T = {
-    var item = null.asInstanceOf[T]
     if(isEmpty()) throw new Exception("List is empty.")
+    val item = last.item
 
     if(size() == 1) {
-      item = first.item
       first = null
       last = null
     }
     else {
-      item = last.item
       last = last.prev
       last.next = null
     }

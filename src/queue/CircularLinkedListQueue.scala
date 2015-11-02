@@ -8,13 +8,9 @@ class CircularLinkedListQueue[T : ClassTag] {
 
   private val cll = new CircularLinkedList[T]
 
-  def enqueue(item : T): Unit = {
-    cll.insertLast(item)
-  }
+  def enqueue(item : T): Unit = cll.insertLast(item)
 
-  def dequeue() : T = {
-    cll.removeFirst()
-  }
+  def dequeue() : T = cll.removeFirst()
 
   def size() = cll.size()
 

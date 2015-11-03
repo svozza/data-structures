@@ -25,6 +25,21 @@ class DoubleLinkedList[T: ClassTag] {
     N += 1
   }
 
+  def insertBefore(before: T, item: T) : Unit = {
+    if(isEmpty()) throw new Exception("List is empty.")
+    traverse(node => {
+      if(node.item == before) {
+        if (node == first) insertFirst(item)
+        else {
+          val insert = new Node(item, node.prev, node)
+          node.prev.next = insert
+          node.prev = insert
+        }
+      }
+    })
+    N += 1
+  }
+
   def insertLast(item: T) : Unit = {
     if(isEmpty()) {
       first = new Node(item, null, null)
@@ -50,6 +65,23 @@ class DoubleLinkedList[T: ClassTag] {
       first.prev = null
     }
     N -= 1
+    item
+  }
+
+  def removeBefore(before: T) : T = {
+    if(isEmpty()) throw new Exception("List is empty.")
+    if(first.item == before) throw new Exception("Cannot call removeBefore on first element of the list.")
+    if(first.next.item == before) return removeFirst()
+    var item = null.asInstanceOf[T]
+    traverse(node => {
+      if(node.item == before) {
+          item = node.prev.item
+          node.prev = node.prev.prev
+          node.prev.next = node
+      }
+    })
+    N -= 1
+    if(size() == 1) first = last
     item
   }
 
@@ -125,9 +157,16 @@ object DoubleLinkedListTest {
     assert(deepEquals(dll, Array[Int]()))
 
     dll.insertLast(5)
-    dll.insertFirst(4)
     dll.insertFirst(3)
-    assert(deepEquals(dll, Array[Int](3, 4, 5)))
+    dll.insertBefore(5, 4)
+    dll.insertFirst(1)
+    dll.insertBefore(3, 2)
+    assert(deepEquals(dll, Array[Int](1, 2, 3, 4, 5)))
+
+    dll.removeBefore(5)
+    dll.removeBefore(2)
+    dll.removeBefore(3)
+    assert(deepEquals(dll, Array[Int](3, 5)))
 
     println("Test Passed!")
   }

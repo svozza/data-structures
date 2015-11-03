@@ -36,12 +36,14 @@ class SingleLinkedList[T : ClassTag] {
     if(isEmpty()) throw new Exception("List is empty.")
     traverse(node => {
       if(node.item == after) {
-        val insert = new Node(item, node.next)
-        node.next = insert
-        if(node == last) last = insert
+        if(node == last) insertLast(item)
+        else {
+          val insert = new Node(item, node.next)
+          node.next = insert
+          N += 1
+        }
       }
     })
-    N += 1
   }
 
   def removeAfter(after: T) : T = {

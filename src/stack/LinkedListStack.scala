@@ -9,20 +9,17 @@ class LinkedListStack[T : ClassTag] {
 
   private val sll = new SingleLinkedList[T]
 
-  def push(item: T) : Unit = {
-    sll.insertFirst(item)
-  }
+  def push(item: T) = sll.insertFirst(item)
+
 
   def pop() : T = {
     if(isEmpty()) throw new Exception("Stack Empty")
     sll.removeFirst()
   }
 
-  def isEmpty() : Boolean = {
-    sll.isEmpty()
-  }
+  def isEmpty() = sll.isEmpty()
 
-  def size() : Int = sll.size()
+  def size() = sll.size()
 
 }
 
